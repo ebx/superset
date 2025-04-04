@@ -89,6 +89,9 @@ function SupersetDashboard() {
             filters: {
               expanded: false,
             },
+            urlParams: {
+              standalone: 3, // Removes all menus on dashboard
+            },
           },
         });
 
