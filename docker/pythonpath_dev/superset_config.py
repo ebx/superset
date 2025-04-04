@@ -26,6 +26,8 @@ import os
 from celery.schedules import crontab
 from flask_caching.backends.filesystemcache import FileSystemCache
 
+from superset.config import TALISMAN_DEV_CONFIG
+
 logger = logging.getLogger()
 
 DATABASE_DIALECT = os.getenv("DATABASE_DIALECT")
@@ -97,7 +99,8 @@ class CeleryConfig:
 
 CELERY_CONFIG = CeleryConfig
 
-FEATURE_FLAGS = {"ALERT_REPORTS": True}
+FEATURE_FLAGS = {"ALERT_REPORTS": True, "EMBEDDED_SUPERSET": True}
+
 ALERT_REPORTS_NOTIFICATION_DRY_RUN = True
 WEBDRIVER_BASEURL = "http://superset:8088/"  # When using docker compose baseurl should be http://superset_app:8088/
 # The base URL for the email report hyperlinks.
@@ -117,3 +120,30 @@ try:
     )
 except ImportError:
     logger.info("Using default Docker config...")
+
+# Mine
+ENABLE_CORS = True
+CORS_OPTIONS = {
+    "origins": ["http://localhost:3000"],
+    "supports_credentials": True
+}
+
+HTTP_HEADERS={"X-Frame-Options":"ALLOWALL"}
+
+# N.B. needs update of TALISMAN_CONFIG for production potentially
+TALISMAN_DEV_CONFIG = {
+    **TALISMAN_DEV_CONFIG,
+    "content_security_policy": {
+        "frame-ancestors": [
+            "'self'",
+            "http://localhost:3000"
+        ]
+    }
+}
+
+# TALISMAN_ENABLED = False
+# HTTP_HEADERS = {'X-Frame-Options': 'ALLOW-FROM http://localhost:8088'}
+
+# DASHBOARD_RBAC = True
+# ENABLE_PROXY_FIX = True
+# PROXY_FIX_CONFIG = {"x_for": 1, "x_proto": 1, "x_host": 1, "x_port": 1, "x_prefix": 1}
